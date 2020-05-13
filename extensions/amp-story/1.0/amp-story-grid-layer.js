@@ -210,7 +210,6 @@ export class AmpStoryGridLayer extends AmpStoryBaseLayer {
       const propertyName = SUPPORTED_CSS_GRID_ATTRIBUTES[attributeName];
       if (propertyName) {
         styles[propertyName] = attribute.value;
-        element.removeAttribute(attributeName);
       }
     }
     setStyles(element, assertDoesNotContainDisplay(styles));
