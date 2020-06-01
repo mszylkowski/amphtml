@@ -140,6 +140,7 @@ export const StateProperty = {
   HAS_SIDEBAR_STATE: 'hasSidebarState',
   INFO_DIALOG_STATE: 'infoDialogState',
   INTERACTIVE_COMPONENT_STATE: 'interactiveEmbeddedComponentState',
+  INTERACTION_REACT_STATE: 'interactiveReactState',
   MUTED_STATE: 'mutedState',
   PAGE_HAS_AUDIO_STATE: 'pageAudioState',
   PAGE_HAS_ELEMENTS_WITH_PLAYBACK_STATE: 'pageHasElementsWithPlaybackState',
@@ -175,6 +176,7 @@ export const StateProperty = {
 /** @const @enum {string} */
 export const Action = {
   ADD_TO_ACTIONS_WHITELIST: 'addToActionsWhitelist',
+  ADD_INTERACTIVE_REACT: 'addInteractiveReact',
   CHANGE_PAGE: 'setCurrentPageId',
   SET_CONSENT_ID: 'setConsentId',
   SET_ADVANCEMENT_MODE: 'setAdvancementMode',
@@ -222,6 +224,17 @@ const stateComparisonFunctions = {
     (old, curr) => old.element !== curr.element || old.state !== curr.state,
   [StateProperty.NAVIGATION_PATH]: (old, curr) => old.length !== curr.length,
   [StateProperty.PAGE_IDS]: (old, curr) => old.length !== curr.length,
+  [StateProperty.INTERACTION_REACT_STATE]: (old, curr) => {
+    Object.keys(curr).forEach((key) => {
+      if (!old[key]) {
+        return false;
+      }
+      if (old[key]['answered'] != curr[key]['answered']) {
+        return false;
+      }
+    });
+    return true;
+  },
 };
 
 /**
@@ -433,6 +446,14 @@ const actions = (state, action, data) => {
         ...state,
         [StateProperty.PAGE_SIZE]: data,
       });
+    case Action.ADD_INTERACTIVE_REACT:
+      return /** @type {!State} */ ({
+        ...state,
+        [StateProperty.INTERACTION_REACT_STATE]: {
+          ...state[StateProperty.INTERACTION_REACT_STATE],
+          [data['reactionId']]: data,
+        },
+      });
     default:
       dev().error(TAG, 'Unknown action %s.', action);
       return state;
@@ -542,6 +563,7 @@ export class AmpStoryStoreService {
       [StateProperty.EDUCATION_STATE]: false,
       [StateProperty.HAS_SIDEBAR_STATE]: false,
       [StateProperty.INFO_DIALOG_STATE]: false,
+      [StateProperty.INTERACTION_REACT_STATE]: {},
       [StateProperty.INTERACTIVE_COMPONENT_STATE]: {
         state: EmbeddedComponentState.HIDDEN,
       },

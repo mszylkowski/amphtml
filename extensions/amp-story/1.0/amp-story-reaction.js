@@ -19,10 +19,14 @@ import {
   StoryAnalyticsEvent,
   getAnalyticsService,
 } from './story-analytics';
+import {
+  Action,
+  StateProperty,
+  getStoreService,
+} from './amp-story-store-service';
 import {AnalyticsVariable, getVariableService} from './variable-service';
 import {CSS} from '../../../build/amp-story-reaction-1.0.css';
 import {Services} from '../../../src/services';
-import {StateProperty, getStoreService} from './amp-story-store-service';
 import {
   addParamsToUrl,
   appendPathToUrl,
@@ -243,6 +247,7 @@ export class AmpStoryReaction extends AMP.BaseElement {
 
   /** @override */
   layoutCallback() {
+    this.updateState_(null);
     return (this.backendDataPromise_ = this.element.hasAttribute('endpoint')
       ? this.retrieveReactionData_()
       : Promise.resolve());
@@ -486,6 +491,7 @@ export class AmpStoryReaction extends AMP.BaseElement {
         this.optionsData_[optionEl.optionIndex_]['selectedByUser'] = true;
       }
 
+      this.updateState_(optionEl.optionIndex_);
       this.mutateElement(() => {
         if (this.optionsData_) {
           this.updateOptionPercentages_(this.optionsData_);
@@ -608,12 +614,30 @@ export class AmpStoryReaction extends AMP.BaseElement {
     data.forEach((response, index) => {
       if (response.selectedByUser) {
         this.hasUserSelection_ = true;
+        this.updateState_(index);
         this.mutateElement(() => {
           this.updateOptionPercentages_(data);
           this.updateToPostSelectionState_(options[index]);
         });
       }
     });
+  }
+
+  /**
+   * @private
+   * @param {?number} option
+   */
+  updateState_(option) {
+    const pageId = closest(dev().assertElement(this.element), (el) => {
+      return el.tagName.toLowerCase() === 'amp-story-page';
+    }).getAttribute('id');
+    const update = {
+      'type': this.reactionType_,
+      'option': option != null ? this.options_[option] : null,
+      'answered': this.hasUserSelection_,
+      'reactionId': pageId,
+    };
+    this.storeService_.dispatch(Action.ADD_INTERACTIVE_REACT, update);
   }
 
   /**

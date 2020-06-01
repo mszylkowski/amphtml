@@ -51,6 +51,7 @@ const buildOptionTemplate = (option) => {
   return html`
     <span
       class="i-amphtml-story-reaction-quiz-option i-amphtml-story-reaction-option"
+      on="tap:AMP.setState({"results": "Me"})"
     >
       <span class="i-amphtml-story-reaction-quiz-answer-choice"></span>
     </span>
