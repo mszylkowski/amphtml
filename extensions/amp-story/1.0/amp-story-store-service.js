@@ -225,15 +225,15 @@ const stateComparisonFunctions = {
   [StateProperty.NAVIGATION_PATH]: (old, curr) => old.length !== curr.length,
   [StateProperty.PAGE_IDS]: (old, curr) => old.length !== curr.length,
   [StateProperty.INTERACTION_REACT_STATE]: (old, curr) => {
+    let result = false;
     Object.keys(curr).forEach((key) => {
-      if (!old[key]) {
-        return false;
-      }
-      if (old[key]['answered'] != curr[key]['answered']) {
-        return false;
+      if (old[key] == undefined) {
+        result = true;
+      } else if (old[key]['answered'] != curr[key]['answered']) {
+        result = true;
       }
     });
-    return true;
+    return result;
   },
 };
 
@@ -447,13 +447,14 @@ const actions = (state, action, data) => {
         [StateProperty.PAGE_SIZE]: data,
       });
     case Action.ADD_INTERACTIVE_REACT:
-      return /** @type {!State} */ ({
+      state = /** @type {!State} */ ({
         ...state,
         [StateProperty.INTERACTION_REACT_STATE]: {
           ...state[StateProperty.INTERACTION_REACT_STATE],
           [data['reactionId']]: data,
         },
       });
+      return state;
     default:
       dev().error(TAG, 'Unknown action %s.', action);
       return state;
@@ -529,6 +530,8 @@ export class AmpStoryStoreService {
     let comparisonFn;
     Object.keys(this.listeners_).forEach((key) => {
       comparisonFn = stateComparisonFunctions[key];
+      if (action == Action.INTERACTION_REACT_STATE) {
+      }
       if (
         comparisonFn
           ? comparisonFn(oldState[key], this.state_[key])

@@ -67,7 +67,8 @@ export class AmpStoryReactionResults extends AMP.BaseElement {
       StateProperty.INTERACTION_REACT_STATE,
       (data) => {
         this.processData(data);
-      }
+      },
+      true
     );
   }
 
@@ -99,32 +100,6 @@ export class AmpStoryReactionResults extends AMP.BaseElement {
     if (totalCount == 0) {
       totalCount = 1;
     }
-    // if (completed == totalCount) {
-    //   this.element.setAttribute('finished', '');
-    // } else {
-    //   this.element.removeAttribute('finished');
-    // }
-
-    // this.element.querySelector(
-    //   '.i-amphtml-story-reaction-results-completeness'
-    // ).textContent = ((completed / totalCount) * 100).toFixed(0) + '% completed';
-
-    // this.element.querySelector(
-    //   '.i-amphtml-story-reaction-results-percentage'
-    // ).textContent = ((correct / totalCount) * 100).toFixed(0) + '%';
-
-    // let resultText = "You're a wizard!";
-    // if (correct == 0) {
-    //   resultText = 'You suck...';
-    // }
-    // if (correct / totalCount < 0.5) {
-    //   resultText = 'Not good enough!';
-    // } else if (correct / totalCount < 0.8) {
-    //   resultText = "Almost there! Study and you'll ace this";
-    // }
-    // this.element.querySelector(
-    //   '.i-amphtml-story-reaction-results-message'
-    // ).textContent = resultText;
     const results = {
       'completed': completed,
       'totalCount': totalCount,
@@ -136,7 +111,6 @@ export class AmpStoryReactionResults extends AMP.BaseElement {
         prev[1] > curr[1] ? prev : curr
       )[0],
     };
-    console.log('RESULTS', results);
 
     AMP.setState({
       'results': results,

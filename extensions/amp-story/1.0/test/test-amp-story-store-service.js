@@ -268,3 +268,59 @@ describes.fakeWin('amp-story-store-service actions', {}, (env) => {
     ]);
   });
 });
+
+describes.fakeWin('amp-story-store-service interaction reacts', {}, (env) => {
+  let storeService;
+  const reactionAnswered = {
+    reactionId: 'foo',
+    option: {optionIndex: 1, correct: '', text: 'This is an option'},
+    type: 1,
+    answered: true,
+  };
+  const reactionUnanswered = {
+    reactionId: 'foo',
+    option: null,
+    type: 1,
+    answered: false,
+  };
+
+  beforeEach(() => {
+    // Making sure we always get a new instance to isolate each test.
+    storeService = new AmpStoryStoreService(env.win);
+  });
+
+  it('should trigger the interaction subscription when added reaction', () => {
+    const actionsListenerSpy = env.sandbox.spy();
+    storeService.subscribe(
+      StateProperty.INTERACTION_REACT_STATE,
+      actionsListenerSpy
+    );
+
+    storeService.dispatch(Action.ADD_INTERACTIVE_REACT, reactionUnanswered);
+    expect(actionsListenerSpy).to.have.been.calledOnce;
+  });
+
+  it('should trigger the interaction subscription only once when added repeated reaction', () => {
+    const actionsListenerSpy = env.sandbox.spy();
+    storeService.subscribe(
+      StateProperty.INTERACTION_REACT_STATE,
+      actionsListenerSpy
+    );
+
+    storeService.dispatch(Action.ADD_INTERACTIVE_REACT, reactionUnanswered);
+    storeService.dispatch(Action.ADD_INTERACTIVE_REACT, reactionUnanswered);
+    expect(actionsListenerSpy).to.have.been.calledOnce;
+  });
+
+  it('should trigger the interaction subscription when updated the reaction', () => {
+    const actionsListenerSpy = env.sandbox.spy();
+    storeService.subscribe(
+      StateProperty.INTERACTION_REACT_STATE,
+      actionsListenerSpy
+    );
+
+    storeService.dispatch(Action.ADD_INTERACTIVE_REACT, reactionUnanswered);
+    storeService.dispatch(Action.ADD_INTERACTIVE_REACT, reactionAnswered);
+    expect(actionsListenerSpy).to.have.been.calledTwice;
+  });
+});
