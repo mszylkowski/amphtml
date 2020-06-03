@@ -30,6 +30,14 @@
     border-radius: 32px !important;
 }
 
+.i-amphtml-story-reaction-quiz-container[is-subjective] {
+    --accent-light: #0058f06c;
+    --correct-color: var(--accent-light) !important;
+    --correct-color-shaded: var(--accent-light) !important;
+    --incorrect-color: var(--accent-light) !important;
+    --incorrect-color-shaded: var(--accent-light) !important;
+}
+
 /* TODO: remove bg on no-prompt attribute here */
 
 .i-amphtml-story-reaction-quiz-prompt-container {
@@ -162,12 +170,12 @@ h3.i-amphtml-story-reaction-quiz-prompt {
     color: white !important;
 }
 
-.i-amphtml-story-reaction-post-selection :not([correct]) > .i-amphtml-story-reaction-quiz-answer-choice {
+.i-amphtml-story-reaction-post-selection:not([is-subjective]) .i-amphtml-story-reaction-option:not([correct]) > .i-amphtml-story-reaction-quiz-answer-choice {
     color: var(--incorrect-color) !important;
     border-color: var(--incorrect-color) !important;
 }
 
-.i-amphtml-story-reaction-post-selection [correct] > .i-amphtml-story-reaction-quiz-answer-choice {
+.i-amphtml-story-reaction-post-selection:not([is-subjective]) .i-amphtml-story-reaction-option[correct] > .i-amphtml-story-reaction-quiz-answer-choice {
     color: var(--correct-color) !important;
     border-color: var(--correct-color) !important;
 }
@@ -180,14 +188,14 @@ h3.i-amphtml-story-reaction-quiz-prompt {
 
 /** TODO(jackbsteinberg): Use a more a11y-friendly approach than font-size: 0px; */
 
-.i-amphtml-story-reaction-post-selection [correct] > .i-amphtml-story-reaction-quiz-answer-choice {
+.i-amphtml-story-reaction-post-selection:not([is-subjective]) .i-amphtml-story-reaction-option[correct] > .i-amphtml-story-reaction-quiz-answer-choice {
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' viewBox='0 0 24 24' fill='%235BBA74'%3E%3Cpath fill='none' d='M0 0h24v24H0z'/%3E%3Cpath d='M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z'/%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: center !important;
     font-size: 0 !important;
 }
 
-.i-amphtml-story-reaction-post-selection :not([correct]) > .i-amphtml-story-reaction-quiz-answer-choice {
+.i-amphtml-story-reaction-post-selection:not([is-subjective]) .i-amphtml-story-reaction-option:not([correct]) > .i-amphtml-story-reaction-quiz-answer-choice {
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24px' height='24px' viewBox='0 0 24 24' fill='%23F34E4E'%3E%3Cpath d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E") !important;
     background-repeat: no-repeat !important;
     background-position: center !important;

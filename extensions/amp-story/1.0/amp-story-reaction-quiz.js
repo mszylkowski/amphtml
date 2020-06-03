@@ -51,7 +51,6 @@ const buildOptionTemplate = (option) => {
   return html`
     <span
       class="i-amphtml-story-reaction-quiz-option i-amphtml-story-reaction-option"
-      on="tap:AMP.setState({"results": "Me"})"
     >
       <span class="i-amphtml-story-reaction-quiz-answer-choice"></span>
     </span>
@@ -120,6 +119,10 @@ export class AmpStoryReactionQuiz extends AmpStoryReaction {
     this.options_.forEach((option, index) =>
       this.configureOption_(option, index)
     );
+
+    if (this.element.getAttribute('is-subjective') != undefined) {
+      this.rootEl_.setAttribute('is-subjective', '');
+    }
 
     devAssert(this.element.children.length == 0, 'Too many children');
   }
