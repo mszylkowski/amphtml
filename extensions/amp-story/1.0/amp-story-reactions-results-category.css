@@ -1,0 +1,98 @@
+/**
+ * Copyright 2020 The AMP HTML Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS-IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import url('https://fonts.googleapis.com/css?family=Poppins:wght@500;900&display=swap');
+
+html {
+  height: 100%;
+}
+
+body {
+  background-color: #757780;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.i-amphtml-story-reaction-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  min-width: 292px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0px 2px 4px #00000055;
+}
+
+.i-amphtml-story-reaction-category-image {
+  width: 100px;
+  height: 100px;
+  background: url('https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg');
+  background-size: cover;
+  background-origin: center;
+}
+
+.i-amphtml-story-reaction-category-selected {
+  color: darkblue;
+  font-size: 50px;
+  font-weight: 900;
+  line-height: 40px;
+  margin-bottom: 5px;
+}
+
+.i-amphtml-story-reaction-category {
+  border: 1px solid #ddd;
+  margin: 5px 0px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2px;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+  width: 100%;
+}
+
+.i-amphtml-story-reaction-category[selected] {
+  background-color: #6ccff6;
+  border: 1px solid #19b3f0;
+  color: white;
+}
+
+.i-amphtml-story-reaction-category[selected]::before {
+  background-color: #19b3f0;
+}
+
+.i-amphtml-story-reaction-category::before {
+  content: '';
+  background-color: #ddd;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+  transform: translatex(calc(var(--percentage) - 100%));
+}
+
+.i-amphtml-story-reaction-category-name,
+.i-amphtml-story-reaction-category-percentage {
+  margin: 2px 10px;
+}

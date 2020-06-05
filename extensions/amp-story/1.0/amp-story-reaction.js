@@ -48,6 +48,7 @@ const TAG = 'amp-story-reaction';
 export const ReactionType = {
   QUIZ: 0,
   POLL: 1,
+  CATEGORY: 2,
 };
 
 /** @const {string} */
@@ -634,6 +635,7 @@ export class AmpStoryReaction extends AMP.BaseElement {
     const update = {
       'type': this.reactionType_,
       'option': option != null ? this.options_[option] : null,
+      'categories': this.options_.map((e) => e.category),
       'answered': this.hasUserSelection_,
       'reactionId': pageId,
     };

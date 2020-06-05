@@ -91,9 +91,11 @@ export class AmpStoryReactionResults extends AMP.BaseElement {
         correct += 1;
       }
       if (reactionConfig['option']['category'] != undefined) {
-        if (!categories[reactionConfig['option']['category']]) {
-          categories[reactionConfig['option']['category']] = 0;
-        }
+        reactionConfig['categories'].forEach((category) => {
+          if (categories[category] == undefined) {
+            categories[category] = 0;
+          }
+        });
         categories[reactionConfig['option']['category']] += 1;
       }
     });
@@ -110,6 +112,7 @@ export class AmpStoryReactionResults extends AMP.BaseElement {
       'category': Object.entries(categories).reduce((prev, curr) =>
         prev[1] > curr[1] ? prev : curr
       )[0],
+      'categories': Object.keys(categories).sort(),
     };
 
     AMP.setState({
