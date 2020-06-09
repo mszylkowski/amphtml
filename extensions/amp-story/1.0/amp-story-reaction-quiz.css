@@ -25,7 +25,7 @@
     --option-2-percentage: 0%;
     --option-3-percentage: 0%;
     --option-4-percentage: 0%;
-    font-family: 'Poppins-bold', sans-serif !important;
+    font-family: 'Poppins', sans-serif !important;
     background: var(--reaction-accent-color) !important;
     border-radius: 32px !important;
 }
