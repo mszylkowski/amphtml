@@ -56,6 +56,9 @@ const buildResultsTemplate = (element) => {
       <div class="i-amphtml-story-interactive-results-prompt"></div>
       <div class="i-amphtml-story-interactive-results-title"></div>
       <div class="i-amphtml-story-interactive-results-description"></div>
+      <a class="i-amphtml-story-interactive-results-cta">
+        <span class="i-amphtml-story-interactive-results-cta-text"></span>
+      </a>
     </div>
   `;
 };
@@ -248,6 +251,18 @@ export class AmpStoryInteractiveResults extends AmpStoryInteractive {
     this.rootEl_.querySelector(
       '.i-amphtml-story-interactive-results-description'
     ).textContent = categorySelected.text || '';
+
+    // Show CTA if this category has link and text.
+    const showCta = categorySelected.ctalink && categorySelected.ctatext;
+    const cta = this.rootEl_.querySelector(
+      '.i-amphtml-story-interactive-results-cta'
+    );
+    cta.classList.toggle('show', showCta);
+    console.log(categorySelected);
+    if (showCta) {
+      cta.href = categorySelected.ctalink;
+      cta.textContent = categorySelected.ctatext;
+    }
   }
 
   /** @override */

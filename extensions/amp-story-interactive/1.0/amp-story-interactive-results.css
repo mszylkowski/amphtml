@@ -137,3 +137,17 @@
   margin-top: 8px !important;
   padding: 0px 20px !important;
 }
+
+.i-amphtml-story-interactive-results-cta {
+  pointer-events: all;
+  background-color: var(--interactive-accent-color);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 32px;
+  text-decoration: none;
+  margin-top: 16px;
+  font-weight: bold;
+  max-width: 50%;
+  box-shadow: var(--i-amphtml-interactive-chip-shadow);
+  margin-bottom: 4px;
+}

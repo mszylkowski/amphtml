@@ -83,6 +83,8 @@ export let InteractiveResponseType;
  *    image: ?string,
  *    confetti: ?string,
  *    resultsthreshold: ?string,
+ *    ctalink: ?string,
+ *    ctatext: ?string,
  * }}
  */
 export let OptionConfigType;
