@@ -56,9 +56,7 @@ const buildResultsTemplate = (element) => {
       <div class="i-amphtml-story-interactive-results-prompt"></div>
       <div class="i-amphtml-story-interactive-results-title"></div>
       <div class="i-amphtml-story-interactive-results-description"></div>
-      <a class="i-amphtml-story-interactive-results-cta">
-        <span class="i-amphtml-story-interactive-results-cta-text"></span>
-      </a>
+      <a class="i-amphtml-story-interactive-results-cta"> </a>
     </div>
   `;
 };

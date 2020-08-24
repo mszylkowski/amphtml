@@ -78,6 +78,7 @@
   margin-bottom: 20px !important;
   border-radius: 2px !important;
   margin: auto !important;
+  display: none;
 }
 
 .i-amphtml-story-interactive-results-dots {
@@ -89,6 +90,7 @@
   height: 94px !important;
   background-position: top !important;
   background-size: 8px 8px !important;
+  display: none;
 }
 
 .i-amphtml-story-interactive-results-visuals {
@@ -106,11 +108,6 @@
 }
 
 .i-amphtml-story-interactive-results-image-border {
-  background: linear-gradient(
-    180deg,
-    transparent 56%,
-    var(--interactive-accent-color) 56%
-  );
   margin: 0px 10px !important;
   padding: 10px !important;
   border-radius: 50% !important;
