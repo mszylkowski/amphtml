@@ -24,6 +24,7 @@
   --option-2-percentage: 0%;
   --option-3-percentage: 0%;
   --option-4-percentage: 0%;
+  max-width: 25em !important;
 }
 
 .i-amphtml-story-interactive-quiz-option-container {

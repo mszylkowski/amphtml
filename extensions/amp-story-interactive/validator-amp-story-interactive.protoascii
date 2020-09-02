@@ -29,6 +29,11 @@ tags: {  # <amp-story-interactive-quiz>
   tag_name: "AMP-STORY-INTERACTIVE-QUIZ"
   requires_extension: "amp-story-interactive"
   mandatory_ancestor: "AMP-STORY-GRID-LAYER"
+  amp_layout: {
+    supported_layouts: CONTAINER
+    supported_layouts: NODISPLAY
+    supported_layouts: RESPONSIVE
+  }
   attr_lists: 'interactive-options-text-attrs'
   attr_lists: 'interactive-options-confetti-attrs'
   attr_lists: 'interactive-shared-configs-attrs'

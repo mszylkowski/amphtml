@@ -32,11 +32,13 @@ import {
 } from '../../../src/url';
 import {base64UrlEncodeFromString} from '../../../src/utils/base64';
 import {closest} from '../../../src/dom';
+import {computedStyle, setStyle, setStyles} from '../../../src/style';
 import {createShadowRootWithStyle} from '../../amp-story/1.0/utils';
 import {deduplicateInteractiveIds} from './utils';
 import {dev, devAssert} from '../../../src/log';
 import {dict} from '../../../src/utils/object';
 import {emojiConfetti} from './interactive-confetti';
+import {min} from 'moment';
 import {toArray} from '../../../src/types';
 
 /** @const {string} */
@@ -239,7 +241,6 @@ export class AmpStoryInteractive extends AMP.BaseElement {
     this.options_ = this.parseOptions_();
     this.element.classList.add('i-amphtml-story-interactive-component');
     this.adjustGridLayer_();
-    devAssert(this.element.children.length == 0, 'Too many children');
 
     // Initialize all the services before proceeding, and update store with state
     return Promise.all([
@@ -259,11 +260,22 @@ export class AmpStoryInteractive extends AMP.BaseElement {
     ]).then(() => {
       this.rootEl_ = this.buildComponent();
       this.rootEl_.classList.add('i-amphtml-story-interactive-container');
-      createShadowRootWithStyle(
-        this.element,
-        dev().assertElement(this.rootEl_),
-        CSS + concreteCSS
-      );
+      if (this.element.getAttribute('i-amphtml-layout') == 'container') {
+        createShadowRootWithStyle(
+          this.element,
+          dev().assertElement(this.rootEl_),
+          CSS + concreteCSS
+        );
+      } else {
+        const fillContent = document.createElement('div');
+        this.applyFillContent(fillContent, true);
+        this.element.appendChild(fillContent);
+        createShadowRootWithStyle(
+          fillContent,
+          dev().assertElement(this.rootEl_),
+          CSS + concreteCSS
+        );
+      }
       return Promise.resolve();
     });
   }
@@ -401,7 +413,7 @@ export class AmpStoryInteractive extends AMP.BaseElement {
 
   /** @override */
   isLayoutSupported(layout) {
-    return layout === 'container';
+    return layout === 'container' || layout === 'responsive';
   }
 
   /**
@@ -784,4 +796,41 @@ export class AmpStoryInteractive extends AMP.BaseElement {
     };
     this.storeService_.dispatch(Action.ADD_INTERACTIVE_REACT, update);
   }
+
+  /** @override */
+  onMeasureChanged() {
+    if (this.element.getAttribute('i-amphtml-layout') === 'container') {
+      return;
+    }
+    let newFontEms = 0;
+    let rootSizes = {};
+    let elementSizes = {};
+    this.measureMutateElement(
+      () => {
+        // Get size of root and element in px
+        elementSizes = getSize(this.element, this.win);
+        rootSizes = getSize(this.rootEl_, this.win);
+        const scalingFactor = Math.min(
+          elementSizes.width / rootSizes.width,
+          elementSizes.height / rootSizes.height
+        );
+        const currentFontEms = elementSizes.fontSize / rootSizes.fontSize;
+        newFontEms = currentFontEms * scalingFactor;
+      },
+      () => {
+        setStyles(this.rootEl_, {
+          'font-size': newFontEms * rootSizes.fontSize + 'px',
+        });
+      }
+    );
+  }
 }
+
+const getSize = (e, win) => {
+  const style = computedStyle(win, e);
+  return {
+    width: parseFloat(style['width'].replace('px', '')),
+    height: parseFloat(style['height'].replace('px', '')),
+    fontSize: parseFloat(style['font-size'].replace('px', '')),
+  };
+};
