@@ -136,12 +136,6 @@ import LocalizedStringsZhCn from './_locales/zh-CN';
 import LocalizedStringsZhTw from './_locales/zh-TW';
 
 /** @private @const {number} */
-const DESKTOP_WIDTH_THRESHOLD = 1024;
-
-/** @private @const {number} */
-const DESKTOP_HEIGHT_THRESHOLD = 550;
-
-/** @private @const {number} */
 const MIN_SWIPE_FOR_HINT_OVERLAY_PX = 50;
 
 /** @enum {string} */
@@ -281,16 +275,7 @@ export class AmpStory extends AMP.BaseElement {
     this.activePage_ = null;
 
     /** @private @const */
-    this.desktopMedia_ = this.win.matchMedia(
-      `(min-width: ${DESKTOP_WIDTH_THRESHOLD}px) and ` +
-        `(min-height: ${DESKTOP_HEIGHT_THRESHOLD}px)`
-    );
-
-    /** @private @const */
-    this.canRotateToDesktopMedia_ = this.win.matchMedia(
-      `(min-width: ${DESKTOP_HEIGHT_THRESHOLD}px) and ` +
-        `(min-height: ${DESKTOP_WIDTH_THRESHOLD}px)`
-    );
+    this.desktopMedia_ = this.win.matchMedia(`(min-aspect-ratio: 1/1)`);
 
     /** @private @const */
     this.landscapeOrientationMedia_ = this.win.matchMedia(
@@ -904,27 +889,6 @@ export class AmpStory extends AMP.BaseElement {
 
     this.getViewport().resetTouchZoom();
     this.getViewport().disableTouchZoom();
-    this.maybeLockScreenOrientation_();
-  }
-
-  /** @private */
-  maybeLockScreenOrientation_() {
-    const {screen} = this.win;
-    if (!screen || !this.canRotateToDesktopMedia_.matches) {
-      return;
-    }
-
-    const lockOrientation =
-      screen.lockOrientation ||
-      screen.mozLockOrientation ||
-      screen.msLockOrientation ||
-      ((unusedOrientation) => {});
-
-    try {
-      lockOrientation('portrait');
-    } catch (e) {
-      dev().warn(TAG, 'Failed to lock screen orientation:', e.message);
-    }
   }
 
   /** @override */
@@ -1725,10 +1689,6 @@ export class AmpStory extends AMP.BaseElement {
       this.storeService_.dispatch(Action.TOGGLE_VIEWPORT_WARNING, false);
       return;
     }
-
-    // Only called when the desktop media query is not matched and the landscape
-    // mode is not enabled.
-    this.maybeTriggerViewportWarning_(isLandscape);
   }
 
   /**
@@ -1747,37 +1707,6 @@ export class AmpStory extends AMP.BaseElement {
         Attributes.ORIENTATION,
         isLandscapeSupported && isLandscape ? 'landscape' : 'portrait'
       );
-    });
-  }
-
-  /**
-   * Maybe triggers the viewport warning overlay.
-   * @param {boolean} isLandscape
-   * @private
-   */
-  maybeTriggerViewportWarning_(isLandscape) {
-    if (
-      isLandscape ===
-      this.storeService_.get(StateProperty.VIEWPORT_WARNING_STATE)
-    ) {
-      return;
-    }
-
-    this.mutateElement(() => {
-      if (isLandscape) {
-        this.pausedStateToRestore_ = !!this.storeService_.get(
-          StateProperty.PAUSED_STATE
-        );
-        this.storeService_.dispatch(Action.TOGGLE_PAUSED, true);
-        this.storeService_.dispatch(Action.TOGGLE_VIEWPORT_WARNING, true);
-      } else {
-        this.storeService_.dispatch(
-          Action.TOGGLE_PAUSED,
-          this.pausedStateToRestore_
-        );
-        this.pausedStateToRestore_ = null;
-        this.storeService_.dispatch(Action.TOGGLE_VIEWPORT_WARNING, false);
-      }
     });
   }
 

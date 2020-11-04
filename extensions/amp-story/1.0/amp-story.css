@@ -143,12 +143,19 @@ html.i-amphtml-story-standalone #i-amphtml-wrapper body {
 amp-story[standalone] {
   align-self: center !important;
   box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.5) !important;
+  background: black;
   height: 100% !important;
   justify-self: center !important;
   max-height: initial !important;
   max-width: initial !important;
   min-height: initial !important;
   min-width: initial !important;
+}
+
+amp-story[standalone]:not(.i-amphtml-story-desktop-panels):not([supports-landscape]) amp-story-page {
+  max-width: 69vh !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 amp-story[standalone].amp-notbuilt {
