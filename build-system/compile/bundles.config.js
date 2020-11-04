@@ -928,7 +928,6 @@ exports.extensionBundles = [
         'amp-story-system-layer',
         'amp-story-tooltip',
         'amp-story-unsupported-browser-layer',
-        'amp-story-viewport-warning-layer',
       ],
     },
     type: TYPES.MISC,
