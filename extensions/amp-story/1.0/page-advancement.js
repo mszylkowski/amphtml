@@ -448,35 +448,42 @@ export class ManualAdvancement extends AdvancementConfig {
    * @private
    */
   shouldHandleEvent_(event) {
+    if (
+      event.target.tagName.toLowerCase() == 'amp-story' &&
+      !event.target.hasAttribute('desktop')
+    ) {
+      return true;
+    }
     let shouldHandleEvent = false;
     let tagName;
 
-    closest(dev().assertElement(event.target), (el) => {
-      tagName = el.tagName.toLowerCase();
+    closest(
+      dev().assertElement(event.target),
+      (el) => {
+        tagName = el.tagName.toLowerCase();
 
-      if (tagName === 'amp-story-page-attachment') {
-        shouldHandleEvent = false;
-        return true;
-      }
+        if (tagName === 'amp-story-page-attachment') {
+          shouldHandleEvent = false;
+          return true;
+        }
 
-      if (
-        tagName.startsWith('amp-story-interactive-') &&
-        !this.isInScreenSideEdge_(event, this.element_.getLayoutBox())
-      ) {
-        shouldHandleEvent = false;
-        return true;
-      }
+        if (
+          tagName.startsWith('amp-story-interactive-') &&
+          !this.isInScreenSideEdge_(event, this.element_.getLayoutBox())
+        ) {
+          shouldHandleEvent = false;
+          return true;
+        }
 
-      if (
-        tagName === 'amp-story-page' ||
-        (tagName === 'amp-story' && !el.hasAttribute('desktop'))
-      ) {
-        shouldHandleEvent = true;
-        return true;
-      }
+        if (tagName === 'amp-story-page') {
+          shouldHandleEvent = true;
+          return true;
+        }
 
-      return false;
-    });
+        return false;
+      },
+      /** opt_stopAt */ this.element_
+    );
 
     return shouldHandleEvent;
   }
