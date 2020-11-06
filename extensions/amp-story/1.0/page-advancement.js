@@ -467,7 +467,10 @@ export class ManualAdvancement extends AdvancementConfig {
         return true;
       }
 
-      if (tagName === 'amp-story') {
+      if (
+        tagName === 'amp-story-page' ||
+        (tagName === 'amp-story' && !el.hasAttribute('desktop'))
+      ) {
         shouldHandleEvent = true;
         return true;
       }
