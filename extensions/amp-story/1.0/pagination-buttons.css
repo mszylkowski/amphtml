@@ -62,10 +62,6 @@ amp-story:not([desktop]) .i-amphtml-story-button-container {
 /* Navigation buttons. These are only displayed on desktop. */
 .i-amphtml-story-button-move {
   display: none !important;
-}
-
-[desktop] .i-amphtml-story-button-move {
-  display: flex !important;
   position: fixed!important;
   top: 0!important;
   bottom: 0!important;
@@ -82,28 +78,19 @@ amp-story:not([desktop]) .i-amphtml-story-button-container {
   opacity: .5!important;
   transition: 150ms opacity linear, 350ms transform linear!important;
   cursor: pointer!important;
+}
+
+[desktop] .i-amphtml-story-button-move {
+  display: flex !important;
   pointer-events: all!important;
 }
 
-.i-amphtml-story-button-move {
-  display: flex !important;
-  position: fixed !important;
-  top: 0 !important;
-  bottom: 0 !important;
-  margin: auto 10px!important;
-  width: 60px!important;
-  height: 60px!important;
-  border-radius: 50%!important;
-  border: 0!important;
-  background-color: #fff!important;
-  background-repeat: no-repeat!important;
-  background-size: 12px 17px!important;
-  justify-content: center!important;
-  align-items: center!important;
-  opacity: .5!important;
-  transition: 150ms opacity linear, 350ms transform linear!important;
-  cursor: pointer!important;
-  pointer-events: all!important;
+@media only screen and (min-aspect-ratio: 88/100) {
+  amp-story:not([desktop]):not([supports-landscape]) .i-amphtml-story-button-move {
+    display: flex !important;
+    margin: auto calc((100vw - 67vh - 120px) / 4) !important;
+    pointer-events: all;
+  }
 }
 
 
@@ -179,20 +166,26 @@ amp-story:not([desktop]) .i-amphtml-story-button-container {
 
 /* Mouseover states */
 .i-amphtml-story-desktop-panels.i-amphtml-story-next-hover > .i-amphtml-story-fwd-next >
-    .i-amphtml-story-button-move {
+    .i-amphtml-story-button-move,
+    amp-story:not(.i-amphtml-story-desktop-panels) > .i-amphtml-story-fwd-next > .i-amphtml-story-button-move:hover {
   transform: translateX(8px)!important;
   opacity: 1!important;
 }
 
 .i-amphtml-story-desktop-panels.i-amphtml-story-next-hover > .i-amphtml-story-fwd-replay >
-    .i-amphtml-story-button-move {
+    .i-amphtml-story-button-move,
+    .i-amphtml-story-desktop-panels.i-amphtml-story-next-hover > .i-amphtml-story-fwd-more >
+    .i-amphtml-story-button-move,
+    amp-story:not(.i-amphtml-story-desktop-panels) > .i-amphtml-story-fwd-replay > .i-amphtml-story-button-move:hover,
+    amp-story:not(.i-amphtml-story-desktop-panels) > .i-amphtml-story-fwd-more > .i-amphtml-story-button-move:hover {
   opacity: 1 !important;
 }
 
 .i-amphtml-story-desktop-panels.i-amphtml-story-prev-hover > .i-amphtml-story-back-prev >
     .i-amphtml-story-button-move,
 .i-amphtml-story-desktop-panels.i-amphtml-story-prev-hover > .i-amphtml-story-back-close-bookend  >
-    .i-amphtml-story-button-move {
+    .i-amphtml-story-button-move,
+    amp-story:not(.i-amphtml-story-desktop-panels) > .i-amphtml-story-back-prev > .i-amphtml-story-button-move:hover {
   transform: translateX(-8px)!important;
   opacity: 1!important;
 }

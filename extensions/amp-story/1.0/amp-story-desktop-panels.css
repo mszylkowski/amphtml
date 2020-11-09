@@ -94,8 +94,8 @@ amp-story[standalone].i-amphtml-story-desktop-panels {
   transform: perspective(1px) scale(var(--i-amphtml-story-inactive-page-scale-factor)) translate(calc(3 * var(--i-amphtml-story-page-50vw, 50%) + 128px), 0%) !important;
 }
 
-.i-amphtml-story-prev-hover > amp-story-page[i-amphtml-desktop-position="-1"],
-.i-amphtml-story-next-hover > amp-story-page[i-amphtml-desktop-position="1"] {
+.i-amphtml-story-prev-hover.i-amphtml-story-desktop-panels > amp-story-page[i-amphtml-desktop-position="-1"],
+.i-amphtml-story-next-hover.i-amphtml-story-desktop-panels > amp-story-page[i-amphtml-desktop-position="1"] {
   opacity: 0.3 !important;
 }
 
