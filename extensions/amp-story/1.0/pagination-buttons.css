@@ -85,6 +85,28 @@ amp-story:not([desktop]) .i-amphtml-story-button-container {
   pointer-events: all!important;
 }
 
+.i-amphtml-story-button-move {
+  display: flex !important;
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  margin: auto 10px!important;
+  width: 60px!important;
+  height: 60px!important;
+  border-radius: 50%!important;
+  border: 0!important;
+  background-color: #fff!important;
+  background-repeat: no-repeat!important;
+  background-size: 12px 17px!important;
+  justify-content: center!important;
+  align-items: center!important;
+  opacity: .5!important;
+  transition: 150ms opacity linear, 350ms transform linear!important;
+  cursor: pointer!important;
+  pointer-events: all!important;
+}
+
+
 .i-amphtml-story-desktop-fullbleed .i-amphtml-story-button-move {
   height: 48px !important;
   width: 48px !important;
