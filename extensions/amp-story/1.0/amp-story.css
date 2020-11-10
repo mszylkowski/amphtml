@@ -982,3 +982,39 @@ amp-story-interactive-results[theme="dark"][chip-style="transparent"] {
 amp-story-page.i-amphtml-story-desktop-panels .i-amphtml-story-interactive-component {
   --i-amphtml-interactive-animation-delay: 350ms !important;
 }
+
+amp-story-page amp-story-grid-layer[backdrop] {
+  display: none !important;
+}
+
+[backdrop-content] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+  opacity: 0.2;
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+[backdrop-content] amp-story-grid-layer {
+  animation: fade-in-backdrop ease 0.25s !important;
+  pointer-events: none !important;
+}
+
+[backdrop-content] amp-story-grid-layer * {
+  pointer-events: none !important;
+}
+
+@keyframes fade-in-backdrop {
+  0% {opacity:0;}
+  100% {opacity:1;}
+}
+
+@media only screen and (max-aspect-ratio: 7/10) {
+  [backdrop-content] {
+    display: none !important;
+  }
+}

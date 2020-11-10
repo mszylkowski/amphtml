@@ -1,0 +1,167 @@
+<!doctype html>
+<html ⚡ lang="es">
+  <head>
+    <meta charset="utf-8">
+    <title>Backdrop Story</title>
+    <link rel="canonical" href="interactives.html">
+    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+    <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+    <style amp-custom>
+      body {
+        font-family: 'Poppins', sans-serif;
+      }
+
+      h2 {
+        font-size: 1.2em;
+      }
+
+      p {
+        font-size: 0.9em;
+      }
+
+      .gradient-still {
+        --color1: #c5ff26;
+        --color2: #45eb90;
+        background: radial-gradient(circle, var(--color1) 0%,
+                                            var(--color2) 10%, var(--color1) 10%,
+                                            var(--color2) 20%, var(--color1) 20%,
+                                            var(--color2) 30%, var(--color1) 30%,
+                                            var(--color2) 40%, var(--color1) 40%,
+                                            var(--color2) 50%, var(--color1) 50%,
+                                            var(--color2) 60%, var(--color1) 60%,
+                                            var(--color2) 70%, var(--color1) 70%,
+                                            var(--color2) 80%, var(--color1) 80%,
+                                            var(--color2) 90%, var(--color1) 90%,
+                                            var(--color2) 100%);
+        background-size: 150% 100%;
+      }
+
+      .gradient-green {
+        --color1: #ffffff;
+        --color2: #67c59b;
+        background: linear-gradient(var(--color1) 50%, var(--color2) 50%);
+      }
+
+      .gradient-blue {
+        --color1: #ffffff;
+        --color2: #0c63b5;
+        background: linear-gradient(var(--color1) 50%,
+                                            var(--color2) 50%);
+      }
+
+      .gradient-anim {
+        --color1: #3d2bdd;
+        --color2: #30aac5;
+        background: linear-gradient(var(--color1) 0%, var(--color2) 100%);
+        animation: pulse-background 5s ease-in-out 0s infinite alternate;
+      }
+
+      @keyframes pulse-background {
+        0% {
+          background-size: 150% 100%;
+        }
+        100% {
+          background-size: 200% 150%;
+        }
+      }
+    </style>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
+    <script async custom-element="amp-story-interactive" src="https://cdn.ampproject.org/v0/amp-story-interactive-0.1.js"></script>
+    <script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <amp-story
+        standalone
+        title="Backdrop Story"
+        publisher="AMP Story testing"
+        publisher-logo-src="example.com/logo.png"
+        poster-portrait-src="example.com/poster.jpg">
+        <amp-story-page id="cover">
+          <amp-story-grid-layer template="fill" backdrop>
+            <amp-img
+                src="https://images.unsplash.com/photo-1604863335536-dfa322f891d0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=10"
+                layout="responsive"
+                height="1600"
+                width="900">
+            </amp-img>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="fill">
+            <amp-img
+                src="https://images.unsplash.com/photo-1604863335536-dfa322f891d0?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1502&q=80"
+                layout="responsive"
+                height="1600"
+                width="900">
+            </amp-img>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="vertical">
+            <div style="background: #000000aa;color:white;padding:10px">
+              <h2>What is the best story ever?</h2>
+              <p>look at the amazing backdrop effect on desktop or tablet</p>
+            </div>
+          </amp-story-grid-layer>
+        </amp-story-page>
+
+        <amp-story-page id="page-1">
+          <amp-story-grid-layer template="fill" backdrop>
+            <amp-img
+                src="https://images.unsplash.com/photo-1604588815508-07e980af572d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=200&q=10"
+                layout="responsive"
+                height="1600"
+                width="900">
+            </amp-img>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="fill">
+            <amp-img
+                src="https://images.unsplash.com/photo-1604588815508-07e980af572d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1500&q=80"
+                layout="responsive"
+                height="1600"
+                width="900">
+            </amp-img>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="vertical">
+            <div style="background: #000000aa;color:white;padding:10px">
+              <h2>This is so cool</h2>
+              <p>The best results are where the background image is used as the backdrop as well</p>
+            </div>
+          </amp-story-grid-layer>
+        </amp-story-page>
+
+        <amp-story-page id="page-2">
+          <amp-story-grid-layer template="fill" backdrop>
+            <div class="gradient-anim gradient-still"></div>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="fill">
+            <div class="gradient-still"></div>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="vertical">
+            <div style="background: #000000aa;color:white;padding:10px">
+              <h2>Can users make backdrops not match?</h2>
+              <p>Hell yeah! But why would they...</p>
+            </div>
+          </amp-story-grid-layer>
+        </amp-story-page>
+
+        <amp-story-page id="page-2">
+          <amp-story-grid-layer template="fill" backdrop>
+            <div class="gradient-blue"></div>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="fill">
+            <div style="background:white;border-bottom:5px solid rgb(0, 229, 255)"></div>
+          </amp-story-grid-layer>
+          <amp-story-grid-layer template="vertical">
+            <div style="background: #000000aa;color:white;padding:10px">
+              <h2>Unless it's part of the branding!</h2>
+            </div>
+            <br>
+            <amp-img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/1004px-Google_%22G%22_Logo.svg.png"
+                width="100"
+                height="100"
+                layout="fixed">
+              </amp-img>
+          </amp-story-grid-layer>
+        </amp-story-page>
+    </amp-story>
+  </body>
+</html>

@@ -436,6 +436,30 @@ export class AmpStory extends AMP.BaseElement {
         );
       });
     }
+
+    this.setUpBackdrop_();
+  }
+
+  /**
+   * @private
+   */
+  setUpBackdrop_() {
+    const backdrop = createElementWithAttributes(this.win.document, 'div', {
+      'backdrop-content': '',
+    });
+    this.element.appendChild(backdrop);
+    this.storeService_.subscribe(StateProperty.CURRENT_PAGE_ID, (e) => {
+      const currPage = this.getPageById(e);
+      const currBackdrop = currPage.element.querySelector(
+        'amp-story-grid-layer[backdrop]'
+      );
+      if (backdrop.children.length > 0) {
+        setTimeout(() => backdrop.children[0].remove(), 250);
+      }
+      if (currBackdrop) {
+        backdrop.appendChild(currBackdrop.cloneNode(true));
+      }
+    });
   }
 
   /**
