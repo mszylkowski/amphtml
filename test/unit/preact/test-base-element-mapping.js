@@ -17,7 +17,9 @@
 import * as Preact from '../../../src/preact/index';
 import {PreactBaseElement} from '../../../src/preact/base-element';
 import {Slot} from '../../../src/preact/slot';
+import {createElementWithAttributes} from '../../../src/dom';
 import {htmlFor} from '../../../src/static-template';
+import {omit} from '../../../src/utils/object';
 import {upgradeOrRegisterElement} from '../../../src/service/custom-element-registry';
 import {waitFor} from '../../../testing/test-helper';
 
@@ -483,6 +485,8 @@ describes.realWin('PreactBaseElement', spec, (env) => {
 
   describe('children mapping', () => {
     let element;
+    const DATE_STRING = '2018-01-01T08:00:00Z';
+    const DATE = Date.parse(DATE_STRING);
 
     beforeEach(async () => {
       Impl['props'] = {
@@ -491,6 +495,15 @@ describes.realWin('PreactBaseElement', spec, (env) => {
       Impl['children'] = {
         'special1': {
           name: 'special1',
+          props: {
+            'noValue': {attr: 'no-value'},
+            'valueWithDef': {attr: 'value-with-def', default: 'DEFAULT'},
+            'propA': {attr: 'prop-a'},
+            'minFontSize': {attr: 'min-font-size', type: 'number'},
+            'aDate': {attr: 'a-date', type: 'date'},
+            'disabled': {attr: 'disabled', type: 'boolean'},
+            'enabled': {attr: 'enabled', type: 'boolean'},
+          },
           selector: '[special1]',
           single: true,
         },
@@ -507,19 +520,54 @@ describes.realWin('PreactBaseElement', spec, (env) => {
         },
         'children': {
           name: 'children',
+          props: {
+            'boolDefTrue': {
+              attr: 'bool-def-true',
+              type: 'boolean',
+              default: true,
+            },
+            'combined': {
+              attrs: ['part-a', 'part-b'],
+              parseAttrs: (e) =>
+                `${e.getAttribute('part-a')}+${e.getAttribute('part-b')}`,
+            },
+            'params': {attrPrefix: 'data-param-'},
+            'prefix': {attrPrefix: 'prefix'},
+          },
           selector: '*',
           single: false,
         },
       };
       element = html`
         <amp-preact layout="fixed" width="100" height="100">
-          <div special1></div>
-          <div id="child1"></div>
-          <div id="child2"></div>
+          <div
+            special1
+            prop-a="A"
+            min-font-size="72"
+            disabled
+            unknown="1"
+          ></div>
+          <div
+            id="child1"
+            part-a="A"
+            part-b="B"
+            data-param-test="helloworld"
+            data-param-test-two="confirm"
+            prefix="pref"
+          ></div>
+          <div
+            id="child2"
+            part-a="C"
+            part-b="D"
+            data-param-test="helloworld2"
+            data-param-test-two="confirm2"
+            prefix="pref2"
+          ></div>
           <div cloned id="cloned1"></div>
           <div cloned id="cloned2"></div>
         </amp-preact>
       `;
+      element.firstElementChild.setAttribute('a-date', DATE_STRING);
       doc.body.appendChild(element);
       await element.build();
       await waitFor(() => component.callCount > 0, 'component rendered');
@@ -536,34 +584,59 @@ describes.realWin('PreactBaseElement', spec, (env) => {
       expect(lastProps).to.not.have.property('special2');
     });
 
-    it('should pass children as prop slot for single-element mapping', () => {
+    it('should pass children as prop slot for single-element mapping and parse attributes', () => {
       const {special1} = lastProps;
       expect(special1.type).to.equal(Slot);
-      expect(special1.props).to.deep.equal({name: 'i-amphtml-special1'});
+      expect(special1.props).to.deep.equal({
+        name: 'i-amphtml-special1',
+        valueWithDef: 'DEFAULT',
+        propA: 'A',
+        minFontSize: 72,
+        aDate: DATE,
+        disabled: true,
+      });
+
       expect(element.querySelector('[special1]').slot).to.equal(
         'i-amphtml-special1'
       );
     });
 
-    it('should pass children as prop slot array', () => {
+    it('should pass children as prop slot array and parse attributes', () => {
       const {children} = lastProps;
       expect(children).to.have.lengthOf(2);
       const {0: child1, 1: child2} = children;
       expect(child1.type).to.equal(Slot);
-      expect(child1.props).to.deep.equal({name: 'i-amphtml-children-0'});
-      expect(element.querySelector('#child1').slot).to.equal(
-        'i-amphtml-children-0'
-      );
+      expect(omit(child1.props, 'name')).to.deep.equal({
+        boolDefTrue: true,
+        combined: 'A+B',
+        params: {test: 'helloworld', testTwo: 'confirm'},
+      });
       expect(child2.type).to.equal(Slot);
-      expect(child2.props).to.deep.equal({name: 'i-amphtml-children-1'});
-      expect(element.querySelector('#child2').slot).to.equal(
-        'i-amphtml-children-1'
-      );
+      expect(omit(child2.props, 'name')).to.deep.equal({
+        boolDefTrue: true,
+        combined: 'C+D',
+        params: {test: 'helloworld2', testTwo: 'confirm2'},
+      });
+
+      // Names are random and most importantly not equal to each other.
+      expect(child1.props.name).to.match(/i-amphtml-children-\d/);
+      expect(child2.props.name).to.match(/i-amphtml-children-\d/);
+      expect(child1.props.name).to.not.equal(child2.props.name);
+      expect(element.querySelector('#child1').slot).to.equal(child1.props.name);
+      expect(element.querySelector('#child2').slot).to.equal(child2.props.name);
     });
 
     it('should rerender on new children', async () => {
-      const newChild = doc.createElement('div');
-      newChild.id = 'child3';
+      await waitFor(() => component.callCount > 0, 'component rendered');
+      const {children: prevChildren} = lastProps;
+      expect(prevChildren).to.have.lengthOf(2);
+      const {0: prevChild1, 1: prevChild2} = prevChildren;
+
+      const newChild = createElementWithAttributes(doc, 'div', {
+        'id': 'child3',
+        'part-a': 'E',
+        'part-b': 'F',
+      });
       element.appendChild(newChild);
 
       await waitFor(() => component.callCount > 1, 'component re-rendered');
@@ -575,23 +648,40 @@ describes.realWin('PreactBaseElement', spec, (env) => {
 
       // New child.
       expect(child3.type).to.equal(Slot);
-      expect(child3.props).to.deep.equal({name: 'i-amphtml-children-2'});
-      expect(newChild.slot).to.equal('i-amphtml-children-2');
+      expect(omit(child3.props, 'name')).to.deep.equal({
+        boolDefTrue: true,
+        combined: 'E+F',
+      });
+      expect(child3.props.name).to.match(/i-amphtml-children-\d/);
+      expect(child3.props.name).to.not.equal(prevChild1.props.name);
+      expect(child3.props.name).to.not.equal(prevChild2.props.name);
+      expect(newChild.slot).to.equal(child3.props.name);
 
       // No changes.
       expect(child1.type).to.equal(Slot);
-      expect(child1.props).to.deep.equal({name: 'i-amphtml-children-0'});
-      expect(element.querySelector('#child1').slot).to.equal(
-        'i-amphtml-children-0'
-      );
+      expect(child1.props).to.deep.equal({
+        name: prevChild1.props.name,
+        boolDefTrue: true,
+        combined: 'A+B',
+        params: {test: 'helloworld', testTwo: 'confirm'},
+      });
+      expect(element.querySelector('#child1').slot).to.equal(child1.props.name);
       expect(child2.type).to.equal(Slot);
-      expect(child2.props).to.deep.equal({name: 'i-amphtml-children-1'});
-      expect(element.querySelector('#child2').slot).to.equal(
-        'i-amphtml-children-1'
-      );
+      expect(child2.props).to.deep.equal({
+        name: prevChild2.props.name,
+        boolDefTrue: true,
+        combined: 'C+D',
+        params: {test: 'helloworld2', testTwo: 'confirm2'},
+      });
+      expect(element.querySelector('#child2').slot).to.equal(child2.props.name);
     });
 
     it('should rerender when children are removed', async () => {
+      await waitFor(() => component.callCount > 0, 'component rendered');
+      const {children: prevChildren} = lastProps;
+      expect(prevChildren).to.have.lengthOf(2);
+      const {1: prevChild2} = prevChildren;
+
       const oldChild = element.querySelector('#child1');
       element.removeChild(oldChild);
 
@@ -604,13 +694,23 @@ describes.realWin('PreactBaseElement', spec, (env) => {
 
       // No changes.
       expect(child2.type).to.equal(Slot);
-      expect(child2.props).to.deep.equal({name: 'i-amphtml-children-1'});
+      expect(child2.props).to.deep.equal({
+        name: prevChild2.props.name,
+        boolDefTrue: true,
+        combined: 'C+D',
+        params: {test: 'helloworld2', testTwo: 'confirm2'},
+      });
       expect(element.querySelector('#child2').slot).to.equal(
-        'i-amphtml-children-1'
+        prevChild2.props.name
       );
     });
 
     it('should rerender on reorder', async () => {
+      await waitFor(() => component.callCount > 0, 'component rendered');
+      const {children: prevChildren} = lastProps;
+      expect(prevChildren).to.have.lengthOf(2);
+      const {0: prevChild1, 1: prevChild2} = prevChildren;
+
       element.insertBefore(
         element.querySelector('#child2'),
         element.querySelector('#child1')
@@ -625,14 +725,24 @@ describes.realWin('PreactBaseElement', spec, (env) => {
 
       // No changes, except for ordering.
       expect(child1.type).to.equal(Slot);
-      expect(child1.props).to.deep.equal({name: 'i-amphtml-children-0'});
+      expect(child1.props).to.deep.equal({
+        name: prevChild1.props.name,
+        boolDefTrue: true,
+        combined: 'A+B',
+        params: {test: 'helloworld', testTwo: 'confirm'},
+      });
       expect(element.querySelector('#child1').slot).to.equal(
-        'i-amphtml-children-0'
+        prevChild1.props.name
       );
       expect(child2.type).to.equal(Slot);
-      expect(child2.props).to.deep.equal({name: 'i-amphtml-children-1'});
+      expect(child2.props).to.deep.equal({
+        name: prevChild2.props.name,
+        boolDefTrue: true,
+        combined: 'C+D',
+        params: {test: 'helloworld2', testTwo: 'confirm2'},
+      });
       expect(element.querySelector('#child2').slot).to.equal(
-        'i-amphtml-children-1'
+        prevChild2.props.name
       );
     });
 

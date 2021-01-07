@@ -119,6 +119,7 @@ const forbiddenTerms = {
       'build-system/pr-check/build.js',
       'build-system/pr-check/build-targets.js',
       'build-system/pr-check/checks.js',
+      'build-system/pr-check/cross-browser-tests.js',
       'build-system/pr-check/dist-bundle-size.js',
       'build-system/pr-check/dist-tests.js',
       'build-system/pr-check/module-dist-bundle-size.js',
@@ -609,6 +610,7 @@ const forbiddenTerms = {
   'overrideVisibilityState': {
     message: 'overrideVisibilityState is a restricted API.',
     allowlist: [
+      'src/friendly-iframe-embed.js',
       'src/multidoc-manager.js',
       'src/service/ampdoc-impl.js',
       'src/service/viewer-impl.js',
@@ -765,7 +767,6 @@ const forbiddenTerms = {
       'extensions/amp-a4a/0.1/test/test-a4a-var-source.js',
       'extensions/amp-a4a/0.1/test/test-amp-a4a.js',
       'extensions/amp-a4a/0.1/test/test-amp-ad-utils.js',
-      'extensions/amp-a4a/0.1/test/test-callout-vendors.js',
       'extensions/amp-a4a/0.1/test/test-refresh.js',
       'extensions/amp-access/0.1/test/test-access-expr.js',
       'extensions/amp-access/0.1/test/test-amp-login-done-dialog.js',
@@ -832,6 +833,7 @@ const forbiddenTerms = {
       'test/unit/test-amp-inabox.js',
       'test/unit/test-animation.js',
       'test/unit/test-batched-json.js',
+      'test/unit/test-callout-vendors.js',
       'test/unit/test-chunk.js',
       'test/unit/test-cid.js',
       'test/unit/test-css.js',
@@ -918,6 +920,10 @@ const bannedTermsHelpString =
   '`object./*OK*/property` if you explicitly need to read or update the ' +
   'forbidden property/method or mark it with `object./*REVIEW*/property` ' +
   'if you are unsure and so that it stands out in code reviews.';
+
+const measurementApiDeprecated =
+  'getLayoutSize/Box APIs are being deprecated. Please contact the' +
+  ' @ampproject/wg-performance for questions.';
 
 const forbiddenTermsSrcInclusive = {
   '\\.innerHTML(?!_)': bannedTermsHelpString,
@@ -1026,6 +1032,7 @@ const forbiddenTermsSrcInclusive = {
       'src/element-stub.js',
       'src/friendly-iframe-embed.js',
       'src/polyfillstub/intersection-observer-stub.js',
+      'src/polyfillstub/resize-observer-stub.js',
       'src/runtime.js',
       'src/service/extensions-impl.js',
       'src/service/lightbox-manager-discovery.js',
@@ -1153,6 +1160,7 @@ const forbiddenTermsSrcInclusive = {
       'testing/local-amp-chrome-extension/background.js',
       'tools/errortracker/errortracker.go',
       'tools/experiments/experiments.js',
+      'validator/js/engine/htmlparser-interface.js',
       'validator/js/engine/validator-in-browser.js',
       'validator/js/engine/validator.js',
       'validator/js/nodejs/index.js',
@@ -1178,21 +1186,46 @@ const forbiddenTermsSrcInclusive = {
     message: 'Unsupported on IE; use trim() or a helper instead.',
     allowlist: ['validator/js/engine/validator.js'],
   },
-  "process\\.env(\\.TRAVIS|\\[\\'TRAVIS)": {
+  "process\\.env(\\.|\\[\\')(TRAVIS|GITHUB_ACTIONS|CIRCLECI)": {
     message:
-      'Do not directly use process.env.TRAVIS. Instead, add a ' +
-      'function to build-system/common/travis.js',
-    allowlist: [
-      'build-system/common/check-package-manager.js',
-      'build-system/common/travis.js',
-    ],
+      'Do not directly use CI-specific environment vars. Instead, add a ' +
+      'function to build-system/common/ci.js',
   },
   '\\.matches\\(': 'Please use matches() helper in src/dom.js',
+  '\\.getLayoutBox': {
+    message: measurementApiDeprecated,
+    allowlist: [
+      'src/base-element.js',
+      'src/custom-element.js',
+      'src/friendly-iframe-embed.js',
+      'src/service/mutator-impl.js',
+      'src/service/resource.js',
+      'src/service/resources-impl.js',
+      'extensions/amp-ad/0.1/amp-ad-3p-impl.js',
+      'extensions/amp-ad-network-adsense-impl/0.1/responsive-state.js',
+      'extensions/amp-fx-flying-carpet/0.1/amp-fx-flying-carpet.js',
+      'extensions/amp-iframe/0.1/amp-iframe.js',
+      'extensions/amp-next-page/1.0/visibility-observer.js',
+      'extensions/amp-playbuzz/0.1/amp-playbuzz.js',
+      'extensions/amp-story/1.0/page-advancement.js',
+    ],
+  },
+  '\\.getIntersectionElementLayoutBox': {
+    message: measurementApiDeprecated,
+    allowlist: [
+      'src/custom-element.js',
+      'extensions/amp-a4a/0.1/amp-a4a.js',
+      'extensions/amp-ad/0.1/amp-ad-3p-impl.js',
+      'extensions/amp-ad-network-adsense-impl/0.1/amp-ad-network-adsense-impl.js',
+      'extensions/amp-ad-network-doubleclick-impl/0.1/amp-ad-network-doubleclick-impl.js',
+      'extensions/amp-iframe/0.1/amp-iframe.js',
+    ],
+  },
 };
 
 // Terms that must appear in a source file.
 const requiredTerms = {
-  'Copyright 20(15|16|17|18|19|20) The AMP HTML Authors\\.': dedicatedCopyrightNoteSources,
+  'Copyright 20(15|16|17|18|19|2\\d) The AMP HTML Authors\\.': dedicatedCopyrightNoteSources,
   'Licensed under the Apache License, Version 2\\.0': dedicatedCopyrightNoteSources,
   'http\\://www\\.apache\\.org/licenses/LICENSE-2\\.0': dedicatedCopyrightNoteSources,
 };
@@ -1344,7 +1377,8 @@ function hasAnyTerms(file) {
   const isTestFile =
     /^test-/.test(basename) ||
     /^_init_tests/.test(basename) ||
-    /_test\.js$/.test(basename);
+    /_test\.js$/.test(basename) ||
+    /storybook\/[^/]+\.js$/.test(pathname);
   if (!isTestFile) {
     hasSrcInclusiveTerms = matchTerms(file, forbiddenTermsSrcInclusive);
   }
