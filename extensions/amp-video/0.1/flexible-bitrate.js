@@ -99,6 +99,7 @@ export class BitrateManager {
       return;
     }
     onNontrivialWait(video, () => {
+      console.log('downgrading');
       const current = currentSource(video);
       this.acceptableBitrate_ = current.bitrate_ - 1;
       this.switchToLowerBitrate_(video, current.bitrate_);
@@ -211,6 +212,11 @@ export class BitrateManager {
    * @private
    */
   switchToLowerBitrate_(video, currentBitrate) {
+    console.log(
+      'switchToLowerBitrate',
+      currentBitrate,
+      this.hasLowerBitrate_(video, currentBitrate)
+    );
     if (!this.hasLowerBitrate_(video, currentBitrate)) {
       dev().fine(TAG, 'No lower bitrate available');
       return;
@@ -247,8 +253,10 @@ export class BitrateManager {
       ) {
         return;
       }
-      this.sortSources_(video);
-      video.load();
+      if (this.hasLowerBitrate_(video, this.acceptableBitrate_)) {
+        this.sortSources_(video);
+        video.load();
+      }
     }
   }
 }
@@ -262,6 +270,7 @@ export class BitrateManager {
 function onNontrivialWait(video, callback) {
   listen(video, 'waiting', () => {
     // Do not trigger downgrade if not loaded metadata yet.
+    console.log('waiting, readyState', video.readyState, video.currentTime);
     if (video.readyState < 1) {
       return;
     }
