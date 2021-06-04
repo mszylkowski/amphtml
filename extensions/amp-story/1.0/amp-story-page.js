@@ -1302,14 +1302,19 @@ export class AmpStoryPage extends AMP.BaseElement {
 
     this.element.setAttribute('distance', distance);
     this.element.setAttribute('aria-hidden', distance != 0);
+    this.toggleTabbableElements_(distance == 0);
+  }
 
+  /**
+   * Registers the media
+   * @return {!Promise}
+   */
+  registerAllMedia() {
     const registerAllPromise = this.registerAllMedia_();
 
-    if (distance > 0 && distance <= 2) {
-      this.findAndPrepareEmbeddedComponents_();
-      registerAllPromise.then(() => this.preloadAllMedia_());
-    }
-    this.toggleTabbableElements_(distance == 0);
+    this.findAndPrepareEmbeddedComponents_();
+    registerAllPromise.then(() => this.preloadAllMedia_());
+    return registerAllPromise;
   }
 
   /**
