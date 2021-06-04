@@ -15,7 +15,8 @@
  */
 
 import {DomBasedWeakRef} from '../../../src/core/dom/weakref';
-import {childElement, childElementsByTag} from '../../../src/dom';
+import {Services} from '../../../src/services';
+import {childElement, childElementsByTag} from '../../../src/core/dom/query';
 import {dev, devAssert} from '../../../src/log';
 import {isExperimentOn} from '../../../src/experiments';
 import {listen, listenOnce} from '../../../src/event-helper';
@@ -53,6 +54,11 @@ export function getBitrateManager(win) {
   if (instance) {
     return instance;
   }
+
+  if (isExperimentOn(win, 'flexible-bitrate')) {
+    Services.performanceFor(win).addEnabledExperiment('flexible-bitrate');
+  }
+
   return (instance = new BitrateManager(win));
 }
 
