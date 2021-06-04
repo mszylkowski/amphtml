@@ -1310,11 +1310,8 @@ export class AmpStoryPage extends AMP.BaseElement {
    * @return {!Promise}
    */
   registerAllMedia() {
-    const registerAllPromise = this.registerAllMedia_();
-
     this.findAndPrepareEmbeddedComponents_();
-    registerAllPromise.then(() => this.preloadAllMedia_());
-    return registerAllPromise;
+    return this.registerAllMedia_().then(() => this.preloadAllMedia_());
   }
 
   /**
