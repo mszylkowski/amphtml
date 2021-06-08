@@ -769,7 +769,8 @@ export class AmpStoryPage extends AMP.BaseElement {
         mediaEl.addEventListener('error', resolve, true /* useCapture */);
       });
     });
-    return Promise.all(mediaPromises).then(() => this.markPageAsLoaded_());
+    this.mediaPromises_ = Promise.all(mediaPromises);
+    return this.mediaPromises_.then(() => this.markPageAsLoaded_());
   }
 
   /**
@@ -1287,7 +1288,7 @@ export class AmpStoryPage extends AMP.BaseElement {
    * @return {number} The distance from the current page to the active page.
    */
   getDistance() {
-    return parseInt(this.element.getAttribute('distance'), 10);
+    return parseInt(this.element.getAttribute('data-distance'), 10);
   }
 
   /**
@@ -1300,7 +1301,7 @@ export class AmpStoryPage extends AMP.BaseElement {
       distance = Math.min(distance, 2);
     }
 
-    this.element.setAttribute('distance', distance);
+    this.element.setAttribute('data-distance', distance);
     this.element.setAttribute('aria-hidden', distance != 0);
     this.toggleTabbableElements_(distance == 0);
   }
@@ -1309,9 +1310,12 @@ export class AmpStoryPage extends AMP.BaseElement {
    * Registers the media
    * @return {!Promise}
    */
-  registerAllMedia() {
+  preloadAssets() {
     this.findAndPrepareEmbeddedComponents_();
-    return this.registerAllMedia_().then(() => this.preloadAllMedia_());
+    this.element.setAttribute('distance', this.getDistance());
+    return this.registerAllMedia_()
+      .then(() => this.preloadAllMedia_())
+      .then(() => this.mediaPromises_);
   }
 
   /**

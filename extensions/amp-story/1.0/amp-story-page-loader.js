@@ -38,9 +38,13 @@ export class AmpStoryPageLoader {
     pagesByDistance.slice(0, 3).forEach((pageIds) => {
       const stepPromise = () =>
         Promise.all(
-          pageIds.map((pageId) =>
-            this.ampStory_.getPageById(pageId).registerAllMedia()
-          )
+          pageIds.map((pageId) => {
+            console.log('registering', pageId);
+            return this.ampStory_
+              .getPageById(pageId)
+              .preloadAssets()
+              .then(() => console.log('registered', pageId));
+          })
         );
       if (this.currentLoadPromise_ == null) {
         this.currentLoadPromise_ = stepPromise();
