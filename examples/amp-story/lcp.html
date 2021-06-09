@@ -106,52 +106,43 @@
 
       <amp-story-page id="page-1" title="Lorem ipsum dolor sit amet">
         <amp-story-grid-layer template="fill">
-          <amp-video autoplay loop
-            id="video1"
+          <amp-img
+            id="img1"
             width="400"
             height="750"
-            poster="./img/poster0.png"
+            src="https://images.unsplash.com/photo-1515705576963-95cad62945b6?w=1750&q=100"
             layout="fill">
-            <source src="./video/p1.mp4" type="video/mp4">
-          </amp-video>
+          </amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="vertical" class="bottom">
-          <p class="bold">LCP for videos</p>
-          <p class="byline">Active page weight: 2.5MB</p>
-          <p class="byline">Inactive pages weight: 7.1MB</p>
-          <p class="last" id="video1-timing">Time: </p>
+          <p class="bold">LCP for images</p>
+          <p class="byline">Active page weight: 1.5MB</p>
+          <p class="byline">Inactive pages weight: 3MB</p>
+          <p class="last" id="img1-timing">Time: </p>
         </amp-story-grid-layer>
       </amp-story-page>
 
       <amp-story-page id="page-2">
         <amp-story-grid-layer template="fill">
-          <amp-video autoplay loop
+          <amp-img
+            id="img2"
             width="400"
             height="750"
-            poster="./img/poster.jpg"
+            src="https://images.unsplash.com/photo-1502318217862-aa4e294ba657?w=1080&q=100"
             layout="fill">
-            <source src="./video/ecommerce.mp4" type="video/mp4">
-          </amp-video>
-        </amp-story-grid-layer>
-        <amp-story-grid-layer template="vertical" class="bottom">
-          <div class="introducing">
-            <p class="bold blue twenty-px center">Introducing</p>
-            <h2 class="bold blue center last">AMP Stories</h2>
-          </div>
+          </amp-img>
         </amp-story-grid-layer>
       </amp-story-page>
 
-      <amp-story-page id="page-3" auto-advance-after="stamp-vid">
+      <amp-story-page id="page-3">
         <amp-story-grid-layer template="fill">
-          <amp-video autoplay
-            id="stamp-vid"
+          <amp-img
+            id="img3"
             width="400"
             height="750"
-            poster="./img/poster2.jpg"
+            src="https://images.unsplash.com/photo-1513809491260-0e192158ae44?w=1080&q=100"
             layout="fill">
-            <source src="./video/stamp.mp4" type="video/mp4">
-            <track default src="./video/stamp.vtt" srclang="en">
-          </amp-video>
+          </amp-img>
         </amp-story-grid-layer>
       </amp-story-page>
 
@@ -250,12 +241,19 @@
     </amp-story>
     <script>
       const startTime = performance.now();
-      const video1 = document.querySelector('#video1');
-      const video1time = document.querySelector('#video1-timing');
-      video1.addEventListener('loadeddata', () => {
-        video1time.textContent = 'Time: ' + Math.round(performance.now() - startTime) + 'ms';
-        console.log('loaded data');
-      });
+      const img1 = document.querySelector('#img1');
+      const img1time = document.querySelector('#img1-timing');
+      const observer = new MutationObserver((mutation) => {
+        const img1El = img1.querySelector('img');
+        if (img1El) {
+          observer.disconnect();
+          img1El.addEventListener('load', () => {
+          img1time.textContent = 'Time: ' + Math.round(performance.now() - startTime) + 'ms';
+            console.log('loaded data');
+          });
+        }
+      })
+      observer.observe(img1, {childList: true});
     </script>
   </body>
 </html>
