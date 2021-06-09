@@ -108,7 +108,10 @@ const TYPE_CHECK_TARGETS = {
   'src-context': ['src/context/**/*.js', ...CORE_SRCS_GLOBS],
   'src-core': CORE_SRCS_GLOBS,
   'src-examiner': ['src/examiner/**/*.js'],
-  'src-experiments': ['src/experiments/**/*.js', ...CORE_SRCS_GLOBS],
+  'src-experiments': {
+    srcGlobs: ['src/experiments/**/*.js', ...CORE_SRCS_GLOBS],
+    externGlobs: ['build-system/externs/amp.extern.js'],
+  },
   'src-inabox': {
     srcGlobs: ['src/inabox/**/*.js'],
     warningLevel: 'QUIET',
@@ -334,12 +337,11 @@ module.exports = {
 };
 
 /* eslint "google-camelcase/google-camelcase": 0 */
-
 checkTypes.description = 'Check source code for JS type errors';
 checkTypes.flags = {
-  closure_concurrency: 'Sets the number of concurrent invocations of closure',
-  debug: 'Outputs the file contents during compilation lifecycles',
+  closure_concurrency: 'Set the number of concurrent invocations of closure',
+  debug: 'Output the file contents during compilation lifecycles',
   targets: 'Comma-delimited list of targets to type-check',
   warning_level:
-    "Optionally sets closure's warning level to one of [quiet, default, verbose]",
+    "Optionally set closure's warning level to one of [quiet, default, verbose]",
 };

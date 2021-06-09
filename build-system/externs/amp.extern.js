@@ -320,6 +320,8 @@ AmpConfigType.prototype.betaErrorReportingUrl;
 AmpConfigType.prototype.localDev;
 /* @public {string} */
 AmpConfigType.prototype.v;
+/* @public {string} */
+AmpConfigType.prototype.type;
 /* @public {boolean} */
 AmpConfigType.prototype.canary;
 /* @public {string} */
@@ -335,8 +337,10 @@ AmpConfigType.prototype.geoApi;
 /* @public {string} */
 AmpConfigType.prototype.geoApiUrl;
 
-/** @type {!AmpConfigType}  */
+/** @type {!AmpConfigType} */
 window.AMP_CONFIG;
+/** @type {undefined|!Object<string, number>} */
+window.AMP_EXP;
 
 window.AMP_CONTEXT_DATA;
 
@@ -1100,20 +1104,6 @@ HTMLVideoElement.prototype.playsInline;
  * @param {string} cssText
  */
 CSSStyleSheet.prototype.replaceSync = function (cssText) {};
-
-/**
- * @constructor @struct
- */
-function ResizeObserverSize() {}
-
-/** @type {number} */
-ResizeObserverSize.prototype.inlineSize;
-
-/** @type {number} */
-ResizeObserverSize.prototype.blockSize;
-
-/** @type {!Array<!ResizeObserverSize>|undefined} */
-ResizeObserverEntry.prototype.borderBoxSize;
 
 /** @type {?function(!MediaQueryListEvent)} */
 MediaQueryList.prototype.onchange;
