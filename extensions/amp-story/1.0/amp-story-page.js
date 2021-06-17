@@ -884,6 +884,7 @@ export class AmpStoryPage extends AMP.BaseElement {
 
   /** @private */
   markPageAsLoaded_() {
+    console.log('page loaded', this.element.id);
     dispatch(
       this.win,
       this.element,
@@ -1299,6 +1300,7 @@ export class AmpStoryPage extends AMP.BaseElement {
     if (distance == this.getDistance()) {
       return;
     }
+    console.log("setting distance", this.element.id, distance);
 
     this.element.setAttribute('distance', distance);
     this.element.setAttribute('aria-hidden', distance != 0);
