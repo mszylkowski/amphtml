@@ -36,7 +36,7 @@ import {VisibilityState} from '#core/constants/visibility-state';
 import {createElementWithAttributes} from '#core/dom';
 import {registerServiceBuilder} from '../../../../src/service-helpers';
 import {toggleExperiment} from '#experiments';
-import {waitFor} from '../../../../testing/test-helper';
+import {waitFor} from '#testing/test-helper';
 import { EventType } from '../events';
 
 // Represents the correct value of KeyboardEvent.which for the Right Arrow

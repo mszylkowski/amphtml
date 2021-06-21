@@ -75,6 +75,7 @@ import {isPrerenderActivePage} from './prerender-active-page';
 import {listen, listenOnce} from '../../../src/event-helper';
 import {CSS as pageAttachmentCSS} from '../../../build/amp-story-open-page-attachment-0.1.css';
 import {prefersReducedMotion} from '#core/dom/media-query-props';
+import {propagateAttributes} from '#core/dom/propagate-attributes';
 import {px, toggle} from '#core/dom/style';
 import {renderPageAttachmentUI} from './amp-story-open-page-attachment';
 import {renderPageDescription} from './semantic-render';
@@ -87,7 +88,7 @@ import {upgradeBackgroundAudio} from './audio';
  * CSS class for an amp-story-page that indicates the entire page is loaded.
  * @const {string}
  */
-const PAGE_LOADED_CLASS_NAME = 'i-amphtml-story-page-loaded';
+export const PAGE_LOADED_CLASS_NAME = 'i-amphtml-story-page-loaded';
 
 /**
  * Selectors for media elements.
@@ -1289,6 +1290,13 @@ export class AmpStoryPage extends AMP.BaseElement {
   }
 
   /**
+   * @return {boolean} Whether it has a distance.
+   */
+  hasDistance() {
+    return this.element.hasAttribute('distance');
+  }
+
+  /**
    * @param {number} distance The distance from the current page to the active
    *     page.
    */
@@ -1915,7 +1923,9 @@ export class AmpStoryPage extends AMP.BaseElement {
         childImgNode &&
           ampImgNode
             .getImpl()
-            .then((ampImg) => ampImg.propagateAttributes('alt', childImgNode));
+            .then((impl) =>
+              propagateAttributes('alt', impl.element, childImgNode)
+            );
       }
     });
   }

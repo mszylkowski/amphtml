@@ -49,7 +49,12 @@ import {AmpStoryCtaLayer} from './amp-story-cta-layer';
 import {AmpStoryEmbeddedComponent} from './amp-story-embedded-component';
 import {AmpStoryGridLayer} from './amp-story-grid-layer';
 import {AmpStoryHint} from './amp-story-hint';
-import {AmpStoryPage, NavigationDirection, PageState} from './amp-story-page';
+import {
+  AmpStoryPage,
+  NavigationDirection,
+  PAGE_LOADED_CLASS_NAME,
+  PageState,
+} from './amp-story-page';
 import {AmpStoryPageAttachment} from './amp-story-page-attachment';
 import {AmpStoryRenderService} from './amp-story-render-service';
 import {AmpStoryViewerMessagingHandler} from './amp-story-viewer-messaging-handler';
@@ -91,7 +96,7 @@ import {endsWith} from '#core/types/string';
 import {escapeCssSelectorIdent} from '#core/dom/css-selectors';
 import {findIndex, lastItem, toArray} from '#core/types/array';
 import {getConsentPolicyState} from '../../../src/consent';
-import {getDetail, listenOncePromise} from '../../../src/event-helper';
+import {getDetail} from '../../../src/event-helper';
 import {getLocalizationService} from './amp-story-localization-service';
 import {getMediaQueryService} from './amp-story-media-query-service';
 import {getMode, isModeDevelopment} from '../../../src/mode';
@@ -138,6 +143,9 @@ const DESKTOP_WIDTH_THRESHOLD = 1024;
 
 /** @private @const {number} */
 const DESKTOP_HEIGHT_THRESHOLD = 550;
+
+/** @private @const {string} */
+const DESKTOP_ONE_PANEL_ASPECT_RATIO_THRESHOLD = '3 / 4';
 
 /** @private @const {number} */
 const MIN_SWIPE_FOR_HINT_OVERLAY_PX = 50;
@@ -284,6 +292,11 @@ export class AmpStory extends AMP.BaseElement {
     this.desktopMedia_ = this.win.matchMedia(
       `(min-width: ${DESKTOP_WIDTH_THRESHOLD}px) and ` +
         `(min-height: ${DESKTOP_HEIGHT_THRESHOLD}px)`
+    );
+
+    /** @private @const */
+    this.desktopOnePanelMedia_ = this.win.matchMedia(
+      `(min-aspect-ratio: ${DESKTOP_ONE_PANEL_ASPECT_RATIO_THRESHOLD})`
     );
 
     /** @private @const */
@@ -1918,6 +1931,9 @@ export class AmpStory extends AMP.BaseElement {
    * @private
    */
   isDesktop_() {
+    if (isDesktopOnePanelExperimentOn(this.win)) {
+      return this.desktopOnePanelMedia_.matches && !this.platform_.isBot();
+    }
     return this.desktopMedia_.matches && !this.platform_.isBot();
   }
 
@@ -2216,7 +2232,7 @@ export class AmpStory extends AMP.BaseElement {
   }
 
   /**
-   * @param {=boolean} prioritizeActivePage
+   * @param {boolean=} prioritizeActivePage
    * @private
    */
   preloadPagesByDistance_(prioritizeActivePage = false) {
@@ -2229,6 +2245,7 @@ export class AmpStory extends AMP.BaseElement {
 
     const pagesByDistance = this.getPagesByDistance_();
 
+    // TODO(mszylkowski): Remove the element check, used for testing.
     prioritizeActivePage = prioritizeActivePage && !this.element.hasAttribute('no-smart-preload');
 
     const preloadAllPages = () => {
@@ -2237,6 +2254,17 @@ export class AmpStory extends AMP.BaseElement {
         pageIds.forEach((pageId) => {
           const page = this.getPageById(pageId);
           page.setDistance(distance);
+        });
+      });
+    }
+
+    const preloadAllPages = (overrideDistances) => {
+      pagesByDistance.forEach((pageIds, distance) => {
+        pageIds.forEach((pageId) => {
+          const page = this.getPageById(pageId);
+          if (overrideDistances || !page.hasDistance()) {
+            page.setDistance(distance);
+          }
         });
       });
     };
@@ -2248,11 +2276,11 @@ export class AmpStory extends AMP.BaseElement {
           pagesByDistance[0].map((pageId) => {
             const page = this.getPageById(pageId);
             page.setDistance(0);
-            return listenOncePromise(page.element, EventType.PAGE_LOADED);
+            return page.signals().whenSignal(CommonSignals.LOAD_END);
           })
-        ).then(() => preloadAllPages());
+        ).then(() => preloadAllPages(/* overrideDistances */ false));
       }
-      preloadAllPages();
+      preloadAllPages(/* overrideDistances */ true);
     });
   }
 
