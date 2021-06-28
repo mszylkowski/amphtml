@@ -1,4 +1,4 @@
-<!-- LCP test. The three images at q=100 will be 1.5MB each. Set q=30 to simulate compressed images at 0.18MB each. -->
+<!-- Use #load=all to disable the experiment, and #compressed=true to test with smaller images. -->
 <!doctype html>
 <html ⚡ lang="en">
 <head>
@@ -10,17 +10,16 @@
   <title>LCP test</title>
 
   <script async custom-element="amp-story" src="https://cdn.ampproject.org/v0/amp-story-1.0.js"></script>
-  <script async custom-element="amp-video" src="https://cdn.ampproject.org/v0/amp-video-0.1.js"></script>
 
   <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
   <style amp-custom>
     * {
       box-sizing: border-box;
     }
-    amp-story * {
+    amp-story-page {
       font-family: 'Helvetica Neue', sans-serif;
       color: white;
-      text-shadow: 0px 2px 4px #00000077;
+      background: black;
     }
     amp-story p {
       line-height: 1.5;
@@ -36,6 +35,9 @@
     }
     .byline {
       letter-spacing: 1.28px;
+    }
+    img {
+      bottom: 35% !important;
     }
   </style>
 </head>
@@ -56,9 +58,9 @@
           </amp-img>
         </amp-story-grid-layer>
         <amp-story-grid-layer template="vertical" class="bottom">
-          <p class="bold">LCP for images loading all 3 pages</p>
-          <p class="byline">Active page weight: 1.5MB</p>
-          <p class="byline">Inactive pages weight: 3MB</p>
+          <p class="bold">LCP for images</p>
+          <p class="byline">load=first</p>
+          <p class="byline">compressed=true</p>
         </amp-story-grid-layer>
       </amp-story-page>
 
@@ -86,21 +88,21 @@
         </amp-story-grid-layer>
       </amp-story-page>
     </amp-story>
-
-    <!-- <script>
-      const startTime = performance.now();
-      const img1 = document.querySelector('#img1');
-      const img1time = document.querySelector('#img1-timing');
-      const observer = new MutationObserver((mutation) => {
-        const img1El = img1.querySelector('img');
-        if (img1El) {
-          observer.disconnect();
-          img1El.addEventListener('load', () => {
-          img1time.textContent = 'Time: ' + Math.round(performance.now() - startTime) + 'ms';
-          });
-        }
+    <script>
+      const loadAll = location.hash.includes('load=all');
+      (self.AMP = self.AMP || []).push(function(AMP) {
+        AMP.toggleExperiment('amp-story-load-first-page-only', !loadAll);
+      });
+      const bylines = document.querySelectorAll('.byline');
+      if (loadAll) {
+        bylines[0].textContent = 'load=all';
+      }
+      const compress = location.hash.includes('compressed=true');
+      const quality = compress ? 30 : 100;
+      document.querySelectorAll('amp-img').forEach((img) => {
+        img.setAttribute('src', img.getAttribute('src').replace('100', quality));
       })
-      observer.observe(img1, {childList: true});
-    </script> -->
+      bylines[1].textContent = 'compressed=' + compress;
+    </script>
   </body>
 </html>

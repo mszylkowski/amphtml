@@ -49,12 +49,7 @@ import {AmpStoryCtaLayer} from './amp-story-cta-layer';
 import {AmpStoryEmbeddedComponent} from './amp-story-embedded-component';
 import {AmpStoryGridLayer} from './amp-story-grid-layer';
 import {AmpStoryHint} from './amp-story-hint';
-import {
-  AmpStoryPage,
-  NavigationDirection,
-  PAGE_LOADED_CLASS_NAME,
-  PageState,
-} from './amp-story-page';
+import {AmpStoryPage, NavigationDirection, PageState} from './amp-story-page';
 import {AmpStoryPageAttachment} from './amp-story-page-attachment';
 import {AmpStoryRenderService} from './amp-story-render-service';
 import {AmpStoryViewerMessagingHandler} from './amp-story-viewer-messaging-handler';
@@ -2245,42 +2240,35 @@ export class AmpStory extends AMP.BaseElement {
 
     const pagesByDistance = this.getPagesByDistance_();
 
-    // TODO(mszylkowski): Remove the element check, used for testing.
-    prioritizeActivePage = prioritizeActivePage && !this.element.hasAttribute('no-smart-preload');
-
     const preloadAllPages = () => {
       pagesByDistance.forEach((pageIds, distance) => {
-        console.log('preload all pages');
         pageIds.forEach((pageId) => {
           const page = this.getPageById(pageId);
           page.setDistance(distance);
         });
       });
-    }
-
-    const preloadAllPages = (overrideDistances) => {
-      pagesByDistance.forEach((pageIds, distance) => {
-        pageIds.forEach((pageId) => {
-          const page = this.getPageById(pageId);
-          if (overrideDistances || !page.hasDistance()) {
-            page.setDistance(distance);
-          }
-        });
-      });
     };
 
     this.mutateElement(() => {
-      if (prioritizeActivePage) {
-        // Load page with distance 0 first, and then load the other ones.
-        return Promise.all(
-          pagesByDistance[0].map((pageId) => {
-            const page = this.getPageById(pageId);
-            page.setDistance(0);
-            return page.signals().whenSignal(CommonSignals.LOAD_END);
-          })
-        ).then(() => preloadAllPages(/* overrideDistances */ false));
+      if (
+        !isExperimentOn(this.win, 'amp-story-load-first-page-only') ||
+        !prioritizeActivePage
+      ) {
+        return preloadAllPages();
       }
-      preloadAllPages(/* overrideDistances */ true);
+      Services.performanceFor(this.win).addEnabledExperiment(
+        'amp-story-load-first-page-only'
+      );
+
+      const activePageId = devAssert(pagesByDistance[0][0]);
+      new Promise((res, rej) => {
+        const page = this.getPageById(activePageId);
+        page.setDistance(0);
+        page.signals().whenSignal(CommonSignals.LOAD_END).then(res);
+        this.storeService_.subscribe(StateProperty.CURRENT_PAGE_ID, rej);
+      })
+        .then(() => preloadAllPages())
+        .catch();
     });
   }
 

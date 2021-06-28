@@ -51,6 +51,7 @@ import {LoadingSpinner} from './loading-spinner';
 import {LocalizedStringId} from '../../../src/localized-strings';
 import {MediaPool} from './media-pool';
 import {Services} from '#service';
+import {StoryAdSegmentTimes} from '#experiments/story-ad-progress-segment';
 import {VideoEvents, delegateAutoplay} from '../../../src/video-interface';
 import {addAttributesToElement, iterateCursor} from '#core/dom';
 import {
@@ -88,7 +89,7 @@ import {upgradeBackgroundAudio} from './audio';
  * CSS class for an amp-story-page that indicates the entire page is loaded.
  * @const {string}
  */
-export const PAGE_LOADED_CLASS_NAME = 'i-amphtml-story-page-loaded';
+const PAGE_LOADED_CLASS_NAME = 'i-amphtml-story-page-loaded';
 
 /**
  * Selectors for media elements.
@@ -391,7 +392,12 @@ export class AmpStoryPage extends AMP.BaseElement {
     const storyNextUpParam = Services.viewerForDoc(this.element).getParam(
       'storyNextUp'
     );
-    if (autoAdvanceAttr !== null || storyNextUpParam === null) {
+    if (
+      autoAdvanceAttr !== null ||
+      storyNextUpParam === null ||
+      // This is a special value that indicates we are in the viewer indicated control group.
+      storyNextUpParam === StoryAdSegmentTimes.SENTINEL
+    ) {
       return;
     }
     addAttributesToElement(
@@ -1287,13 +1293,6 @@ export class AmpStoryPage extends AMP.BaseElement {
    */
   getDistance() {
     return parseInt(this.element.getAttribute('distance'), 10);
-  }
-
-  /**
-   * @return {boolean} Whether it has a distance.
-   */
-  hasDistance() {
-    return this.element.hasAttribute('distance');
   }
 
   /**
